@@ -8,7 +8,6 @@ import (
 
 	flclient "github.com/weaveworks-liquidmetal/controller-pkg/client"
 	"github.com/weaveworks-liquidmetal/controller-pkg/types/microvm"
-	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -251,34 +250,10 @@ func setupScheme() (*runtime.Scheme, error) {
 	if err := clusterv1.AddToScheme(scheme); err != nil {
 		return nil, err
 	}
-	if err := corev1.AddToScheme(scheme); err != nil {
+	if err := v1.AddToScheme(scheme); err != nil {
 		return nil, err
 	}
 	return scheme, nil
-}
-
-func newCluster(name string, failureDomains []string) *clusterv1.Cluster {
-	cluster := &clusterv1.Cluster{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: "default",
-		},
-	}
-
-	if len(failureDomains) > 0 {
-		cluster.Status = clusterv1.ClusterStatus{
-			FailureDomains: make(clusterv1.FailureDomains),
-		}
-
-		for i := range failureDomains {
-			fd := failureDomains[i]
-			cluster.Status.FailureDomains[fd] = clusterv1.FailureDomainSpec{
-				ControlPlane: true,
-			}
-		}
-	}
-
-	return cluster
 }
 
 func newMicrovm(name string, providerID string) *infrav1.Microvm {
