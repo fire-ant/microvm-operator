@@ -1,0 +1,5 @@
+for f in listdir('config/samples'):
+    k8s_yaml(f)
+
+local_resource('build','make docker-build docker-push IMG=localhost:5005/microvm-operator:tag')
+local_resource('deploy','make deploy IMG=registry:5000/microvm-operator:tag')
